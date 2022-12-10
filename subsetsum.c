@@ -13,56 +13,50 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+typedef struct {
+    int **solution;
+    int solution_count;
+} Solution;
+
 bool promising(int i, int weight, int total, int *numbers, int count, int target_sum)
 {
     return (weight + total >= target_sum) && (weight == target_sum || weight + numbers[i + 1] <= target_sum);
 }
 
-int **findSolutions(int *numbers, int count, int target_sum)
+Solution *findSolutions(int *numbers, int count, int target_sum)
 {
+    Solution *solutions = (Solution *)malloc(sizeof(Solution));
+    solutions->solution = (int **)malloc(sizeof(int *) * count);
+    solutions->solution_count = 0;
+
+    int *solution = (int *)malloc(sizeof(int) * count);
     int total = 0;
     for (int i = 0; i < count; i++)
         total += numbers[i];
-
-    int *solution = (int *)malloc(count * sizeof(int));
-    int **solutions = (int **)malloc(count * sizeof(int *));
-
-    int solution_count = 0;
-
-    int i = 0, weight = 0;
-    while (1)
+    
+    int weight = 0;
+    int i = 0;
+    while (i >= 0)
     {
-        while (i < count && promising(i, weight, total, numbers, count, target_sum))
+        if (promising(i, weight, total, numbers, count, target_sum))
         {
             weight += numbers[i];
             solution[i] = 1;
+            if (weight == target_sum)
+            {
+                solutions->solution[solutions->solution_count] = (int *)malloc(sizeof(int) * count);
+                for (int j = 0; j < count; j++)
+                    solutions->solution[solutions->solution_count][j] = solution[j];
+                solutions->solution_count++;
+            }
             i++;
         }
-
-        if (weight == target_sum)
+        else
         {
-            solutions[solution_count] = (int *)malloc(count * sizeof(int));
-            for (int j = 0; j < count; j++)
-                solutions[solution_count][j] = solution[j];
-            solution_count++;
-        }
-
-        while (i >= 0 && solution[i] != 1)
+            solution[i] = 0;
             i--;
-
-        if (i < 0)
-            break;
-
-        solution[i] = 0;
-        weight -= numbers[i];
-        i++;
+        }
     }
-
-    printf("The subset is: ");
-    for (int i = 0; i < count; i++)
-        if (solution[i] == 1)
-            printf("%d ", numbers[i]);
-    printf("\n");
 
     return solutions;
 }
@@ -87,7 +81,17 @@ int main(int argc, char **argv)
     printf("Enter the sum: ");
     scanf("%d", &sum);
 
-    int **solutions = findSolutions(a, n, sum);
+    Solution *solutions = findSolutions(a, n, sum);
+
+    printf("The subset is: ");
+    for (int i = 0; i < solutions->solution_count; i++) {
+        for (int j = 0; j < n; j++) {
+            if (solutions->solution[i][j] == 1)
+                printf("%d ", a[j]);
+        }
+        printf("\n");
+    }
+
 
     return 0;
 }
