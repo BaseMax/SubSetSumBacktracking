@@ -91,17 +91,24 @@ int main(int argc, char **argv)
     // Enter the sum: 0
 
     int n, sum;
+
+    n = 5;
+//    printf("Enter the number of elements: ");
+//    scanf("%d", &n);
+
     int *a = (int *)malloc(n * sizeof(int));
+    a[0] = -2;
+    a[1] = -1;
+    a[2] = 0;
+    a[3] = 1;
+    a[4] = 2;
+//    printf("Enter the elements: ");
+//    for (int i = 0; i < n; i++)
+//        scanf("%d", &a[i]);
 
-    printf("Enter the number of elements: ");
-    scanf("%d", &n);
-
-    printf("Enter the elements: ");
-    for (int i = 0; i < n; i++)
-        scanf("%d", &a[i]);
-
-    printf("Enter the sum: ");
-    scanf("%d", &sum);
+    sum = 0;
+//    printf("Enter the sum: ");
+//    scanf("%d", &sum);
 
     printf("Finding solutions...\n");
     Solution *solutions = findSolutions(a, n, sum);
